@@ -203,6 +203,8 @@ Pada program ini, konsep abstraction diterapkan dengan membuat abstract class da
    >Elemen kunci pada kelas ini adalah deklarasi method abstrak tandaSaldo. Method inilah yang menentukan arah pengaruh transaksi terhadap saldo dan wajib diisi oleh setiap kelas turunan. Implementasi kontrak interface dilakukan oleh method efekSaldo yang ditulis langsung di kelas induk dengan rumus tandaSaldo × jumlah. Dengan pola ini, penentuan apakah efeknya positif atau negatif tidak diputuskan di kelas induk, melainkan diserahkan ke subclass melalui tandaSaldo dengan Pemasukan mengembalikan nilai +1 dan Pengeluaran mengembalikan nilai −1. Susunan tersebut menjadikan Transaksi landasan yang menyatukan struktur data dan cara menghitung efek saldo, sementara perilaku spesifik ditentukan oleh masing-masing turunan membuat kode rapi, konsisten, dan mudah diperluas.
 
 #### Penjelasan Penerapan Polymorphism
+Konsep Polymorphism dalam program ini muncul dalam dua bentuk yaitu Overriding dan Overloading
+
 - **Overriding**
   - `Pemasukan.getJenis()` & `Pengeluaran.getJenis()` mengunci jenis masing-masing, `Pemasukan.tandaSaldo()` mengembalikan `+1`, `Pengeluaran.tandaSaldo()` `-1`
 
