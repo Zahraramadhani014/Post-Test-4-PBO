@@ -230,11 +230,15 @@ Konsep Polymorphism dalam program ini muncul dalam dua bentuk yaitu Overriding d
 
 #### Kombinasi abstract class + interface
 - `Transaksi` (abstract class) **mengimplementasikan** interface `SaldoEffect`. Perhitungan saldo global menggunakan pemanggilan polimorfik `efekSaldo()`
+
+  - Transaksi.java — implementasi interface di kelas abstrak (efekSaldo() = tandaSaldo() * jumlah)
   
   <img width="633" height="27" alt="image" src="https://github.com/user-attachments/assets/e0f25372-1e28-4c90-b92c-f2ae9915bcfb" />
   
   <img width="543" height="141" alt="image" src="https://github.com/user-attachments/assets/b17f7d2f-90d3-440a-a05c-047423f4d125" />
 
+   - TransaksiService.java — pemakaian polimorfik interface (ringkasanSaldo() menjumlah daftar.stream().mapToDouble(Transaksi::efekSaldo).sum())
+     
   <img width="1152" height="378" alt="image" src="https://github.com/user-attachments/assets/817a76e6-31d4-4ad0-a296-384085e6be06" />
   
   >Bagian ini menunjukkan perpaduan abstract class dan interface dalam perhitungan saldo. Kelas Transaksi dideklarasikan sebagai kelas abstrak yang mengimplementasikan interface SaldoEffect. Implementasi method efekSaldo() ditulis sekali di Transaksi dengan rumus tandaSaldo() * jumlah, sementara penentuan nilai tanda diserahkan ke subclass melalui method abstrak tandaSaldo() dengan Pemasukan mengembalikan +1 dan Pengeluaran mengembalikan -1. Saat laporan dibuat di ringkasanSaldo(), daftar transaksi diproses dengan memanggil efekSaldo() pada setiap elemen. Karena pemanggilan itu bersifat polimorfik, setiap objek otomatis memberi kontribusi positif atau negatif sesuai jenisnya tanpa perlu if else. Hasilnya, total saldo global dapat dihitung bersih, terstruktur, dan mudah diperluas bila kelak ada tipe transaksi baru cukup menambahkan subclass yang mengisi tandaSaldo() tanpa mengubah logika di service.
