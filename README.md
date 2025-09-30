@@ -45,7 +45,7 @@ Secara keseluruhan, Pocket Guard membantu melacak arus kas harian, menjaga kesei
       >
       >Perulangan disusun dengan pola do while sehingga menu selalu kembali muncul setelah satu aksi selesai. Program hanya berhenti ketika opsi keluar dipilih. Jika angka yang dimasukkan di luar rentang, blok default pada switch menampilkan pesan bahwa pilihan tidak valid lalu alur dikembalikan ke menu utama tanpa menghentikan proses. Di bagian penutup, App.java menampilkan ucapan terima kasih dan mengakhiri eksekusi dengan rapi.
       >
-      >Peran App.java sengaja dibuat ringan. Seluruh perhitungan dan aturan bisnis ditempatkan di TransaksiService, sedangkan App.java fokus pada orkestrasi alur, penggambaran menu, dan validasi input dasar. Pemisahan ini membuat kode mudah dibaca serta mudah dirawat. Penambahan fitur baru cukup dilakukan di lapisan service tanpa mengubah struktur App.java. Desain seperti ini juga memudahkan pengujian karena logika inti terkumpul pada satu tempat. Alur kerjanya jelas sejak awal hingga akhir. Program dibuat, service diinisialisasi, data contoh diisi, menu muncul, sebuah pilihan diproses, hasilnya ditampilkan, lalu kontrol kembali ke menu sampai akhirnya dipilih keluar.
+      >Peran App.java sengaja dibuat ringan. Seluruh perhitungan dan aturan bisnis ditempatkan di TransaksiService, sedangkan App.java fokus pada pengendalian alur, tampilan menu, dan validasi input dasar. Pemisahan ini membuat kode mudah dibaca serta mudah dirawat. Penambahan fitur baru cukup dilakukan di lapisan service tanpa mengubah struktur App.java. Desain seperti ini juga memudahkan pengujian karena logika inti terkumpul pada satu tempat. Alur kerjanya jelas sejak awal hingga akhir: program dibuat, service diinisialisasi, data contoh diisi, menu muncul, sebuah pilihan diproses, hasilnya ditampilkan, lalu kontrol kembali ke menu sampai akhirnya dipilih keluar.
 
    b. Class Transaksi.Java yang terdapat di Packages Model
 
@@ -127,7 +127,7 @@ Secara keseluruhan, Pocket Guard membantu melacak arus kas harian, menjaga kesei
       
         <img width="325" height="24" alt="image" src="https://github.com/user-attachments/assets/3c91dc17-f660-4ca6-a227-b79b1e16f29b" />
         
-        >Package ini memuat logika bisnis aplikasi melalui kelas TransaksiService. Di dalamnya tersimpan daftar Transaksi berupa objek Pemasukan dan Pengeluaran serta method seed untuk menyiapkan data awal. TransaksiService menyediakan operasi inti seperti menambah data, menampilkan dalam tabel, mengubah berdasarkan ID, menghapus dengan konfirmasi, menampilkan ringkasan saldo melalui pemanggilan polimorfik efekSaldo, dan menyetel batas pengeluaran bulanan lengkap dengan peringatannya. Menu bantu mencakup filter per jenis, kategori, dan metode pembayaran, berikut pencarian teks pada kolom keterangan.
+        >Package ini memuat logika bisnis aplikasi melalui kelas TransaksiService. Di dalamnya tersimpan daftar Transaksi berupa objek Pemasukan dan Pengeluaran serta method seed untuk menyiapkan data awal. TransaksiService menyediakan operasi inti seperti menambah data, menampilkan dalam tabel, mengubah berdasarkan ID, menghapus dengan konfirmasi, menampilkan ringkasan saldo melalui pemanggilan polimorfik efekSaldo, dan menyetel batas pengeluaran bulanan lengkap dengan peringatannya. Menu bantu mencakup filter per jenis, kategori, dan metode pembayaran, serta pencarian teks pada kolom keterangan.
         >
         >Agar interaksi konsol tertata, disertakan berbagai helper untuk validasi input, format rupiah, serta tampilan header. Paket service berperan sebagai penghubung antara antarmuka konsol di App dan struktur data pada paket model, sehingga pemisahan tanggung jawab terasa jelas dan keseluruhan kode lebih mudah dikelola.
 
@@ -171,7 +171,7 @@ Secara keseluruhan, Pocket Guard membantu melacak arus kas harian, menjaga kesei
 
       <img width="405" height="233" alt="image" src="https://github.com/user-attachments/assets/a0aedc93-9373-46d3-b114-9cc94d765e18" />
 
-      >Pada kelas Pemasukan.java, method getJenis() dioverride agar selalu mengembalikan nilai string “Pemasukan”. Dengan demikian, setiap kali objek Pemasukan dipanggil untuk mengetahui jenis transaksinya, hasilnya akan konsisten dan tidak dapat berubah. Selain itu, method setJenis(String jenis) juga dioverride namun dibuat kosong, sehingga meskipun pengguna mencoba mengubah jenis transaksi, nilainya tidak akan berubah. Hal ini memastikan bahwa objek Pemasukan akan selalu beridentitas sebagai pemasukan.
+      >Pada kelas Pemasukan.java, method getJenis() dioverride agar selalu mengembalikan nilai string “Pemasukan”. Dengan demikian, setiap kali objek Pemasukan dipanggil untuk mengetahui jenis transaksinya, hasilnya akan konsisten dan tidak dapat berubah. Selain itu, method setJenis(String jenis) juga dioverride namun dibuat kosong, sehingga meskipun mencoba mengubah jenis transaksi, nilainya tidak akan berubah. Hal ini memastikan bahwa objek Pemasukan akan selalu beridentitas sebagai pemasukan.
 
    b. Class Pengeluaran.Java
 
@@ -181,7 +181,9 @@ Secara keseluruhan, Pocket Guard membantu melacak arus kas harian, menjaga kesei
 
    Penerapan overriding ini sangat penting karena menjaga konsistensi data antara jenis transaksi dengan subclass yang menaunginya. Selain itu, hal ini juga memperlihatkan penggunaan prinsip polimorfisme dalam OOP, di mana pemanggilan method getJenis() akan menghasilkan perilaku yang berbeda tergantung pada objek sebenarnya, apakah itu Pemasukan atau Pengeluaran, meskipun keduanya ditampung dalam list bertipe Transaksi.
 
-#### Penerapan Abstraction
+#### Penjelasan Penerapan Abstraction
+Pada program ini, konsep abstraction diterapkan dengan membuat abstract class dan interface
+
 1) **Interface `SaldoEffect`**: mendefinisikan kontrak `efekSaldo()` untuk menghitung pengaruh transaksi terhadap saldo.
 
    <img width="568" height="155" alt="image" src="https://github.com/user-attachments/assets/243d563b-af09-473a-bc07-9513a49c7921" />
