@@ -29,7 +29,7 @@ Tersedia pula fitur filter catatan berdasarkan jenis, kategori, dan metode pemba
 
 Secara keseluruhan, Pocket Guard membantu melacak arus kas harian, menjaga keseimbangan keuangan, dan membiasakan pencatatan keuangan secara teratur.
 
-### ~ Penjelasan Program  ~
+### ~ 📌 Penjelasan Program 📌 ~
 
 1. Penjelasan class yang ada di program "Pocket Guard"
    
@@ -37,39 +37,71 @@ Secara keseluruhan, Pocket Guard membantu melacak arus kas harian, menjaga kesei
    
       <img width="331" height="44" alt="image" src="https://github.com/user-attachments/assets/9c8671df-aa36-41fe-9192-2b3d77087926" />
 
-      > Kelas App berfungsi sebagai titik masuk utama program dan berada pada package main. Di dalam kelas ini terdapat method main yang menampilkan menu aplikasi Pocket Guard dengan antarmuka berbasis console. Kelas App mengatur perulangan menu menggunakan struktur do..while serta switch case untuk mengeksekusi pilihan pengguna, seperti menambah, melihat, mengubah, menghapus catatan, hingga menampilkan ringkasan saldo atau mengatur batas pengeluaran. Semua logika yang lebih kompleks didelegasikan kepada kelas TransaksiService. Selain itu, di file ini juga terdapat kelas kecil bernama SafeInput yang bertugas menangani input angka agar lebih aman, sehingga program tidak error ketika pengguna salah memasukkan data. Dengan demikian, App berperan sebagai penghubung antara pengguna dengan logika bisnis yang ada di service.
+      <img width="647" height="930" alt="image" src="https://github.com/user-attachments/assets/a0d97ec1-65e8-471f-889e-22c9270a21be" />
+
+      > App.java adalah titik masuk program yang berada di paket com.mycompany.posttest4pbo.main. Di dalam method main, aplikasi menginisialisasi TransaksiService lalu memanggil seed() untuk mengisi beberapa data contoh agar menu bisa langsung dicoba. Setelah itu, program menampilkan antarmuka konsol Pocket Guard berupa daftar pilihan dan membaca input dari keyboard. Perulangan do while membuat menu selalu kembali tampil setelah suatu aksi selesai, dan hanya berhenti ketika opsi keluar dipilih. Pengarahan alur dilakukan dengan switch: setiap angka menu dipetakan ke pemanggilan metode pada TransaksiService, misalnya tambahCatatan(), lihatSemuaCatatan(), ubahCatatan(), hapusCatatan(), ringkasanSaldo(), menuFilter(), hingga setBatasPengeluaran(). Dengan pola ini, App.java tidak menyimpan logika bisnis tetapi berperan sebagai pengatur alur eksekusi dan delegator ke lapisan service.
+      > 
+      > Input angka ditangani oleh utilitas SafeInput.safeNextInt() yang membungkus Scanner dan melakukan validasi berulang sampai nilai bilangan yang sah diberikan. Strategi ini mencegah NumberFormatException sehingga aplikasi tetap stabil meskipun terjadi salah ketik. Jika nilai pilihan di luar rentang, blok default pada switch menampilkan pesan bahwa pilihan tidak valid lalu mengembalikan alur ke menu utama tanpa menghentikan program. Ketika opsi keluar dipilih, App.java menampilkan ucapan terima kasih dan mengakhiri perulangan sehingga proses berakhir dengan rapi.
+      > 
+      > Peran App.java dapat dipandang sebagai controller pada pola sederhana MVC dengan berinteraksi melalui konsol, meneruskan perintah ke TransaksiService sebagai lapisan bisnis, dan secara tidak langsung bekerja dengan objek model seperti Transaksi, Pemasukan, dan Pengeluaran. Pemisahan tanggung jawab ini membuat kode mudah dipelihara penambahan fitur atau perubahan aturan cukup dilakukan di service tanpa mengubah struktur App.java. Dengan demikian, App.java menjadi penghubung yang ringan, fokus pada orkestrasi alur, validasi input dasar, dan pengalaman menu yang konsisten.
 
    b. Class Transaksi.Java yang terdapat di Packages Model
 
       <img width="332" height="115" alt="image" src="https://github.com/user-attachments/assets/19888393-0825-4799-b009-dc5324e0b25a" />
 
-      > Kelas Transaksi terletak pada package model dan berperan sebagai superclass atau kelas induk dari data transaksi. Kelas ini berisi atribut yang umum dimiliki setiap transaksi, yaitu id, tanggal, keterangan, jenis, kategori, metodePembayaran, dan jumlah. Semua atribut dibuat private untuk menerapkan konsep encapsulation, sedangkan aksesnya diberikan melalui method getter dan setter yang bersifat public. Konstruktor kelas Transaksi digunakan untuk menginisialisasi seluruh atribut ketika sebuah objek transaksi baru dibuat. Dengan adanya kelas ini, struktur data transaksi menjadi konsisten dan dapat diwariskan ke subclass lain. Kelas Transaksi juga menjadi kontrak dasar yang memungkinkan penggunaan polimorfisme pada list transaksi di kelas service.
+      <img width="781" height="771" alt="image" src="https://github.com/user-attachments/assets/b4bc8454-f038-40b5-8c45-622a7650584c" />
+
+      > Transaksi adalah kelas induk abstrak untuk seluruh jenis transaksi di aplikasi dan berada di com.mycompany.posttest4pbo.model. Kelas ini mengimplementasikan interface SaldoEffect. Objek Transaksi tidak dibuat langsung, yang digunakan adalah turunannya, yaitu Pemasukan dan Pengeluaran.
+      > 
+      > Seluruh atribut id, tanggal, keterangan, jenis, kategori, metodePembayaran, dan jumlah bersifat private untuk menerapkan enkapsulasi. Akses dan perubahan nilai dilakukan melalui getter dan setter. Konstruktor dipakai untuk menginisialisasi semua atribut saat objek dibuat agar data transaksi selalu lengkap dan konsisten.
+      >
+      > Kelas ini menetapkan method abstrak tandaSaldo() sebagai penentu arah saldo, subclass wajib mengembalikan +1 untuk pemasukan dan -1 untuk pengeluaran. Implementasi kontrak dari interface dilakukan lewat method efekSaldo(), yang menghitung pengaruh transaksi terhadap saldo dengan rumus tandaSaldo() * jumlah.
+      >
+      > Dengan rancangan tersebut, kode di layer service dapat menjumlahkan saldo cukup dengan memanggil efekSaldo() secara polimorfik setiap objek (Pemasukan atau Pengeluaran) otomatis memberikan nilai yang sesuai tipenya tanpa membutuhkan percabangan tambahan. Jadi, Transaksi berfungsi sebagai basis pewarisan sekaligus wadah data yang terenkapsulasi, sehingga struktur program tetap rapi dan mudah dipelihara.
 
    c. Class Pemasukan.Java yang terdapat di Packages Model
 
       <img width="332" height="115" alt="image" src="https://github.com/user-attachments/assets/0b43dcb2-197d-444c-b043-c153776644bd" />
 
-      > Kelas Pemasukan juga berada pada package model dan merupakan subclass dari Transaksi. Kelas ini merepresentasikan transaksi yang berjenis pemasukan. Konstruktor di dalamnya akan otomatis mengatur jenis transaksi menjadi “Pemasukan” tanpa harus diinput ulang oleh pengguna. Selain itu, kelas ini melakukan overriding terhadap method getJenis() sehingga setiap kali dipanggil akan selalu mengembalikan nilai “Pemasukan”. Method setJenis() juga dioverride dan dikosongkan agar nilai jenis tidak dapat diubah secara sembarangan. Dengan cara ini, objek Pemasukan tetap konsisten menyimpan identitasnya sebagai pemasukan, sekalipun pengguna mencoba melakukan perubahan pada menu ubah data.
+      <img width="928" height="435" alt="image" src="https://github.com/user-attachments/assets/6c3b0274-7885-41ef-a9c7-46c53a83c96d" />
 
+      > Kelas Pemasukan berada di package model sebagai turunan dari Transaksi dan merepresentasikan transaksi berjenis pemasukan. Konstruktor secara otomatis menetapkan field jenis menjadi “Pemasukan” serta meneruskan atribut lain ke kelas induk. Di dalamnya terdapat overriding pada getJenis() yang selalu mengembalikan string “Pemasukan”, sementara setJenis(String) di override menjadi tidak melakukan apa pun agar nilai jenis tidak dapat diubah. Method tandaSaldo() juga dioverride untuk mengembalikan +1, menandakan efek penambahan terhadap saldo. Dengan rancangan ini, setiap objek Pemasukan terjaga konsistensinya sebagai transaksi pemasukan dan berperilaku benar saat dihitung dalam ringkasan melalui pemanggilan polimorfik efekSaldo().
+      
    d. Class Pengeluaran.Java yang terdapat di Packages Model
 
       <img width="332" height="115" alt="image" src="https://github.com/user-attachments/assets/a878740f-0cc3-4502-85d2-96bcd4401439" />
 
-      > Kelas Pengeluaran merupakan subclass lain dari Transaksi yang juga berada di package model. Fungsinya adalah merepresentasikan transaksi yang berjenis pengeluaran. Sama seperti Pemasukan, konstruktor Pengeluaran secara otomatis menetapkan jenis transaksi sebagai “Pengeluaran”. Method getJenis() dioverride agar selalu mengembalikan “Pengeluaran”, sedangkan method setJenis() juga dioverride untuk mencegah perubahan jenis. Hal ini membuat setiap objek Pengeluaran tetap terjaga konsistensinya sebagai transaksi pengeluaran. Dengan adanya subclass Pemasukan dan Pengeluaran, struktur data lebih terpisah dengan jelas sekaligus lebih aman dari kesalahan input.
+      <img width="956" height="429" alt="image" src="https://github.com/user-attachments/assets/52b6c02a-56a4-48d9-8930-02d4b03812c1" />
+
+      > Kelas Pengeluaran berada di package model sebagai turunan dari Transaksi dan merepresentasikan transaksi berjenis pengeluaran. Konstruktor secara otomatis menetapkan nilai jenis menjadi “Pengeluaran” sekaligus meneruskan atribut lain ke kelas induk.
+      > 
+      > Di kelas ini, getJenis() dioverride untuk selalu mengembalikan “Pengeluaran”, sedangkan setJenis(String) dioverride menjadi tidak melakukan apa pun agar nilai jenis tidak dapat diubah. Method abstrak tandaSaldo() juga dioverride dan mengembalikan -1 sebagai penanda bahwa transaksi ini mengurangi saldo. Dengan susunan seperti ini, setiap objek Pengeluaran tetap konsisten sebagai transaksi pengeluaran dan otomatis berkontribusi negatif saat perhitungan ringkasan saldo melalui pemanggilan polimorfik efekSaldo(). Struktur terpisah antara Pemasukan dan Pengeluaran membuat perilaku tiap jenis transaksi jelas tanpa perlu percabangan tambahan di layer service.
 
    e. Class SaldoEffect.Java yang terdapat di Packages Model
-   
-      <img width="332" height="115" alt="image" src="https://github.com/user-attachments/assets/fe6201ce-ca29-45c5-a7d6-980559ea4936" />
 
-      >
+      <img width="311" height="108" alt="image" src="https://github.com/user-attachments/assets/8bc0bc70-9f9d-4e80-9c8a-f331b3dbe496" />
+
+
+
+
+
+      <img width="569" height="156" alt="image" src="https://github.com/user-attachments/assets/f515fe5c-345c-4423-9e54-67756cbdc983" />
+
+      > SaldoEffect.java berisi sebuah interface bernama SaldoEffect yang mendefinisikan satu kontrak yaitu method efekSaldo() yang mengembalikan nilai double. Nilai yang dikembalikan bersifat bertanda positif untuk pemasukan dan negatif untuk pengeluaran sehingga merepresentasikan pengaruh langsung sebuah transaksi terhadap saldo. Kontrak ini diimplementasikan oleh kelas abstrak Transaksi. Di dalam Transaksi, perhitungan dilakukan dengan rumus efekSaldo() = tandaSaldo() * jumlah, sementara penentuan tanda diserahkan ke subclass melalui tandaSaldo() (Pemasukan mengembalikan +1, Pengeluaran -1). Dengan pendekatan ini, saat menghitung ringkasan di TransaksiService, daftar transaksi cukup dijumlahkan melalui pemanggilan polimorfik efekSaldo() tanpa percabangan tambahan. Interface ini memisahkan definisi “apa yang harus tersedia” dari detail implementasi, sehingga struktur tetap rapi dan mudah diperluas bila kelak ditambahkan jenis transaksi lain.
       
    f. Class TransaksiService.Java yang terdapat di Packages Service
 
       <img width="343" height="52" alt="image" src="https://github.com/user-attachments/assets/137a271d-7e35-4e0e-b586-ce8c51ef3573" />
 
-      > Kelas TransaksiService terletak pada package service dan bertanggung jawab mengelola seluruh logika bisnis aplikasi. Di dalamnya terdapat sebuah list bertipe Transaksi yang dapat menyimpan objek Pemasukan maupun Pengeluaran. Di sinilah konsep polimorfisme dijalankan, karena meskipun list bertipe Transaksi, saat method getJenis() dipanggil, hasilnya akan menyesuaikan perilaku override dari masing-masing subclass. TransaksiService menyediakan berbagai fitur seperti menambah data baru dengan memilih subclass sesuai jenis transaksi, menampilkan seluruh catatan dalam bentuk tabel, mengubah data, menghapus data, menghitung ringkasan saldo, serta mengatur batas pengeluaran bulanan. Selain itu, TransaksiService juga memiliki fitur filter berdasarkan kategori, metode pembayaran, dan jenis transaksi, serta pencarian berdasarkan keterangan. Untuk mendukung hal itu, disediakan berbagai helper method privat seperti validasi input, pencarian ID, pemformatan rupiah, dan tampilan tabel. Dengan demikian, TransaksiService berfungsi sebagai penghubung utama antara antarmuka di kelas App dan data model pada kelas Transaksi beserta turunannya.
+      <img width="740" height="938" alt="image" src="https://github.com/user-attachments/assets/38009052-5b64-4e21-8830-86af1f8a8868" />
 
-1. Penjelasan packages yang ada di program "Pocket Guard"
+      > TransaksiService berada pada lapisan service dan memegang seluruh logika bisnis aplikasi. Di dalamnya tersimpan koleksi List<Transaksi> yang menampung objek Pemasukan maupun Pengeluaran, lengkap dengan mekanisme seed() untuk mengisi data awal. Kelas ini menyediakan operasi inti antara lain menambah catatan baru, menampilkan seluruh catatan dalam bentuk tabel, mengubah catatan berdasarkan ID, menghapus catatan dengan konfirmasi, menampilkan ringkasan saldo, serta mengatur batas pengeluaran bulanan. Saat ringkasan dihitung, metode memanfaatkan polimorfisme melalui pemanggilan efekSaldo() pada setiap elemen daftar sehingga Pemasukan bernilai positif dan Pengeluaran bernilai negatif sesuai implementasi subclass sehingga perhitungan dapat dilakukan tanpa percabangan tambahan.
+      > 
+      > Antarmuka konsol yang sederhana disiapkan lewat beberapa utilitas tampilan termasuk header judul dan formatter rupiah. Untuk pengalaman input yang lebih aman, tersedia serangkaian helper inputWajib() dan inputTanggalWajib() dengan regex untuk memastikan kolom penting terisi dan bertanggal valid, inputPilihanWajib() untuk membatasi nilai hanya pada opsi yang diizinkan, inputDoubleWajib() dan inputDoubleNonNegatif() untuk memverifikasi angka, lalu versi opsional seperti inputStringOpsional() dan inputDoubleOpsional() yang mengizinkan Enter untuk mempertahankan nilai lama saat proses ubah, serta safeNextInt() yang mengatasi kesalahan konversi angka. Pencarian objek dilakukan melalui findById() sedangkan utilitas garis() dan formatRupiah() dipakai saat mencetak tabel transaksi.
+      >
+      > Fitur filter dan pencarian disediakan dalam satu menu yang dapat memfilter berdasarkan jenis, kategori, atau metode pembayaran serta melakukan pencarian teks pada kolom keterangan. Peringatan akan muncul bila total pengeluaran melampaui batas bulanan yang disetel. Sebagai sentuhan OOP tambahan, method tampilkanTabel() dibuat dalam dua versi tanpa parameter dan dengan parameter List<Transaksi> sehingga memperlihatkan contoh overloading yang sederhana namun berguna. Secara keseluruhan, TransaksiService menjadi penghubung utama antara lapisan App yang menampilkan menu dengan data model Transaksi beserta turunannya sekaligus memastikan validasi, format keluaran, dan aturan bisnis berjalan konsisten.
+      
+3. Penjelasan packages yang ada di program "Pocket Guard"
    
    - Packages Main
       
@@ -89,7 +121,7 @@ Secara keseluruhan, Pocket Guard membantu melacak arus kas harian, menjaga kesei
 
         > Package com.mycompany.posttest3pbo.service berisi logika bisnis yang mengatur jalannya aplikasi, diwakili oleh kelas TransaksiService. Kelas ini bertugas menyimpan daftar transaksi, menambahkan data baru, mengedit, menghapus, hingga menampilkan ringkasan saldo. Selain itu, package ini juga mengelola fitur tambahan seperti pengaturan batas pengeluaran, filter berdasarkan kategori, metode pembayaran, maupun pencarian keterangan. Package Service inilah yang menjadi penghubung antara antarmuka pengguna di kelas App dengan struktur data pada package Model, sehingga tanggung jawab program terpisah dengan jelas dan program lebih mudah dikelola.
 
-2. Penjelasan encapsulation (getter dan setter)
+4. Penjelasan encapsulation (getter dan setter)
    
    <img width="1077" height="341" alt="image" src="https://github.com/user-attachments/assets/85f7d6c2-6608-4782-8b76-593537d4647a" />
 
@@ -97,7 +129,7 @@ Secara keseluruhan, Pocket Guard membantu melacak arus kas harian, menjaga kesei
    >
    > Selain itu, encapsulation juga memudahkan pengembangan di masa depan. Jika diperlukan logika tambahan, misalnya validasi nilai sebelum disimpan, hal tersebut dapat ditambahkan langsung di dalam setter tanpa perlu mengubah kode di bagian lain. Dengan demikian, encapsulation tidak hanya berfungsi melindungi data, tetapi juga membuat program lebih rapi, terstruktur, serta sejalan dengan prinsip dasar Object-Oriented Programming (OOP).
 
-3. Penjelasan inheritance (minimal memiliki 1 superclass dengan 2 subclass)
+5. Penjelasan inheritance (minimal memiliki 1 superclass dengan 2 subclass)
 
    Pada program ini, konsep inheritance diterapkan dengan menjadikan kelas Transaksi.java sebagai superclass, sedangkan kelas Pemasukan.java dan Pengeluaran.java sebagai subclass.
    
@@ -121,7 +153,7 @@ Secara keseluruhan, Pocket Guard membantu melacak arus kas harian, menjaga kesei
 
    Melalui penerapan inheritance ini, program dapat memanfaatkan satu struktur induk yang umum (Transaksi) sekaligus mengelompokkan transaksi ke dalam subclass khusus (Pemasukan dan Pengeluaran).
 
-4. Penjelasan Overriding
+6. Penjelasan Overriding
 
    Pada program Pocket Guard, konsep overriding diterapkan di dalam subclass Pemasukan.java dan Pengeluaran.java. Overriding berarti sebuah subclass mendefinisikan ulang method yang sudah ada di superclass dengan perilaku yang lebih spesifik sesuai kebutuhan.
 
